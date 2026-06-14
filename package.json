@@ -8,7 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "prettier": {
     "printWidth": 100,
@@ -27,6 +29,7 @@
       "module": "CommonJS"
     }
   },
+  "type": "module",
   "private": true,
   "packageManager": "npm@10.9.2",
   "dependencies": {
@@ -40,16 +43,21 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "^22.0.0",
     "@angular/build": "^22.0.1",
     "@angular/cli": "^22.0.1",
     "@angular/compiler-cli": "^22.0.1",
+    "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
+    "angular-eslint": "^22.0.0",
+    "eslint": "^10.5.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "jest-preset-angular": "^16.2.0",
     "jsdom": "^27.4.0",
     "ts-node": "^10.9.2",
     "typescript": "~6.0.3",
+    "typescript-eslint": "^8.33.0",
     "vitest": "^4.0.8"
   }
 }

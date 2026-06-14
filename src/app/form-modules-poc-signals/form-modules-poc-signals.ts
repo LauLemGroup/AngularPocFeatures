@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, inject, Signal, signal} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, ROUTER_OUTLET_DATA} from '@angular/router';
 import {map, of} from 'rxjs';
 import {rxResource, toSignal} from '@angular/core/rxjs-interop';
 import {form, FormField, minLength, required, validate, validateAsync, validateTree} from '@angular/forms/signals';
@@ -38,6 +38,8 @@ interface UserFormModel {
 export class FormModulesPocSignals {
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
+
+    readonly message = inject<Signal<string>>(ROUTER_OUTLET_DATA);
 
     userModel = signal<UserFormModel>({
         name: '',

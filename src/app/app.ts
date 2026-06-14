@@ -1,5 +1,7 @@
-import {Component, signal} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {filter, map} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +10,13 @@ import {RouterOutlet} from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('AngularPocFeatures');
+  private readonly router = inject(Router);
+
+  protected readonly message = toSignal(
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      map(_ => `BONJOUR${this.router.url.length}`),
+    ),
+    {initialValue: `BONJOUR${this.router.url.length}`},
+  );
 }

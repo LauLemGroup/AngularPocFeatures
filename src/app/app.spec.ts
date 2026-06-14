@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
 
@@ -19,9 +20,9 @@ describe('App', () => {
 
   it('should have title signal initialized to "AngularPocFeatures"', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
+    const app = fixture.componentInstance as App & { title: Signal<string> };
 
-    expect((app as any).title()).toBe('AngularPocFeatures');
+    expect(app.title()).toBe('AngularPocFeatures');
   });
 
   it('should render a router-outlet in the template', async () => {
