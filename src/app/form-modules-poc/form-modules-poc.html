@@ -1,0 +1,51 @@
+<p>form-modules-poc works!</p>
+<button (click)="redirectToHome()">Go to home</button>
+
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <label for="prenom" [class.error-label]="profileForm.get('prenom')?.touched && profileForm.get('prenom')?.invalid">Prénom
+        :</label>
+    <input id="prenom" formControlName="prenom"/>
+
+    <label for="nom">Nom :</label>
+    <input id="nom" formControlName="name"/>
+
+    @if (profileForm.controls.name.hasError('ErrorNameKey') && profileForm.controls.name.touched) {
+        <p>Erreur : {{ profileForm.controls.name.getError('ErrorNameKey')?.value }}</p>
+    }
+    @if (profileForm.controls.name.valid) {
+        <p>Le nom est valide</p>
+    }
+
+    <label for="champAsync">champAsync :</label>
+    <input id="champAsync" formControlName="champAsync"/>
+
+    <div formGroupName="address">
+        <h2>Address</h2>
+        <label for="street">Street :</label>
+        <input id="street" type="text" formControlName="street"/>
+        <label for="city">City :</label>
+        <input id="city" type="text" formControlName="city"/>
+        <label for="state">State :</label>
+        <input id="state" type="text" formControlName="state"/>
+        <label for="zip">Zip Code :</label>
+        <input id="zip" type="text" formControlName="zip"/>
+    </div>
+
+    <div formArrayName="champs">
+        <h2>Champs</h2>
+        <button type="button" (click)="addChamp()">Ajouter un champ</button>
+
+        @for (champ of champs.controls; track $index; let i = $index) {
+            <div [formGroupName]="i">
+                <h3>Champ {{ i + 1 }}</h3>
+                <label [for]="'first-' + i">First :</label>
+                <input [id]="'first-' + i" type="text" formControlName="first"/>
+                <label [for]="'second-' + i">Second :</label>
+                <input [id]="'second-' + i" type="text" formControlName="second"/>
+                <button type="button" (click)="removeChamp(i)">Supprimer</button>
+            </div>
+        }
+    </div>
+
+    <button type="submit" [disabled]="!profileForm.valid">Submit</button>
+</form>
