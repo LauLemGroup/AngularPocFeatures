@@ -1,5 +1,5 @@
 // setup-jest.ts
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
 
-// Initialise l'environnement Zone.js pour les tests Angular
-setupZoneTestEnv();
+// Initialise l'environnement de test Angular en mode zoneless (sans Zone.js)
+setupZonelessTestEnv();

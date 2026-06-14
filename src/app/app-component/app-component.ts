@@ -9,11 +9,11 @@ import {Router} from "@angular/router";
 })
 export class AppComponent {
   readonly router = inject(Router);
-  protected redirectToPocTest() {
+  redirectToPocTest() {
     this.router.navigate(['/formModulesPoc/test']);
   }
 
-  protected redirectToPocSignalsTest() {
+  redirectToPocSignalsTest() {
     this.router.navigate(['/formModulesPocSignals/123/test/123']);
   }
 }
