@@ -1,3 +1,225 @@
-<p>app-component works!</p>
-<button (click)="redirectToPocTest()">Go to poc form modules</button>
-<button (click)="redirectToPocSignalsTest()">Go to poc form modules signals</button>
+<!-- ============================================================
+  🎨 POC SCSS — app-component
+  Fonctionnalités démontrées :
+    1. &#64;use + variables
+    2. Mixins / &#64;include
+    3. Nesting
+    4. &#64;media
+    5. &#64;container
+    6. :host / :host-context
+    7. Interpolation #{ }
+    8. Fonctions SCSS
+  ============================================================ -->
+
+<main class="poc-wrapper" role="main" aria-label="POC SCSS Angular">
+
+  <!-- ─── Header ─────────────────────────────────────────────── -->
+  <header class="poc-header">
+    <h1 class="poc-header__title">🎨 POC SCSS — Fonctionnalités avancées</h1>
+    <p class="poc-header__subtitle">
+      Démonstration interactive de toutes les fonctionnalités SCSS dans Angular
+    </p>
+    <div class="poc-header__actions">
+      <button
+        class="btn btn--primary"
+        type="button"
+        [attr.aria-pressed]="isDarkTheme()"
+        (click)="toggleTheme()"
+      >
+        {{ isDarkTheme() ? '☀️ Thème clair' : '🌙 Thème sombre' }}
+      </button>
+      <button class="btn btn--secondary" type="button" (click)="redirectToPocTest()">
+        Go to poc form modules
+      </button>
+      <button class="btn btn--secondary" type="button" (click)="redirectToPocSignalsTest()">
+        Go to poc form modules signals
+      </button>
+      <button class="btn btn--secondary" type="button" (click)="redirectToFlexboxDemo()">
+        Go to flexbox demo
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Section 1 : Variables ─────────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-variables">
+    <h2 id="sec-variables" class="poc-section__title">
+      <span class="poc-section__badge">1</span>
+      Variables SCSS <code>($variable)</code>
+    </h2>
+    <p class="poc-section__desc">
+      Les variables SCSS (préfixées par <code>$</code>) sont définies dans
+      <code>_variables.scss</code> et importées via <code>&#64;use './variables' as *</code>.
+      Changer une valeur ici l'applique partout dans le fichier.
+    </p>
+    <ul class="variables-demo" aria-label="Palette de couleurs">
+      <li class="variables-demo__swatch variables-demo__swatch--primary">$color-primary</li>
+      <li class="variables-demo__swatch variables-demo__swatch--secondary">$color-secondary</li>
+      <li class="variables-demo__swatch variables-demo__swatch--accent">$color-accent</li>
+      <li class="variables-demo__swatch variables-demo__swatch--warning">$color-warning</li>
+    </ul>
+  </section>
+
+  <!-- ─── Section 2 : Mixins ─────────────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-mixins">
+    <h2 id="sec-mixins" class="poc-section__title">
+      <span class="poc-section__badge">2</span>
+      Mixins <code>&#64;mixin / &#64;include</code>
+    </h2>
+    <p class="poc-section__desc">
+      Un <code>&#64;mixin</code> est un bloc de styles réutilisable et paramétrable,
+      invoqué avec <code>&#64;include</code>. Ici : <code>flex-center()</code>,
+      <code>card()</code> et <code>btn-variant()</code>.
+    </p>
+    <div class="mixins-demo">
+      <article class="card card--elevated">
+        <h3 class="card__title">Carte via <code>&#64;include card()</code></h3>
+        <p class="card__body">
+          Ce bloc utilise le mixin <code>card</code> qui applique border-radius,
+          padding, box-shadow et background en une seule ligne d'&#64;include.
+        </p>
+      </article>
+      <div class="flex-center-demo" aria-label="Démonstration flex-center">
+        <span>Centré via <code>&#64;include flex-center()</code></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Section 3 : Nesting ────────────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-nesting">
+    <h2 id="sec-nesting" class="poc-section__title">
+      <span class="poc-section__badge">3</span>
+      Nesting (imbrication)
+    </h2>
+    <p class="poc-section__desc">
+      SCSS permet d'imbriquer les sélecteurs pour refléter la hiérarchie HTML.
+      Le <code>&amp;</code> référence le sélecteur parent.
+      Exemple : <code>.nav &#123; &amp;__item &#123; &amp;--active &#123; &#125; &#125; &#125;</code>
+    </p>
+    <nav class="nesting-nav" aria-label="Navigation démonstration nesting">
+      <ul class="nesting-nav__list">
+        <li class="nesting-nav__item">
+          <a href="#sec-variables" class="nesting-nav__link">Variables</a>
+        </li>
+        <li class="nesting-nav__item nesting-nav__item--active">
+          <a href="#sec-nesting" class="nesting-nav__link" aria-current="true">Nesting (actif)</a>
+        </li>
+        <li class="nesting-nav__item">
+          <a href="#sec-media" class="nesting-nav__link">Media Queries</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- ─── Section 4 : @media ─────────────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-media">
+    <h2 id="sec-media" class="poc-section__title">
+      <span class="poc-section__badge">4</span>
+      Media Queries <code>&#64;media</code>
+    </h2>
+    <p class="poc-section__desc">
+      En SCSS, les <code>&#64;media</code> s'imbriquent directement dans un sélecteur.
+      Les breakpoints sont centralisés dans <code>_variables.scss</code> et réutilisés
+      via le mixin <code>respond-to($bp)</code>. Redimensionnez la fenêtre.
+    </p>
+    <ul class="media-demo" aria-label="Grille responsive">
+      @for (item of gridItems(); track item.id) {
+        <li class="media-demo__item" [attr.aria-label]="'Élément ' + item.id">
+          <span class="media-demo__label" aria-hidden="true">{{ item.id }}</span>
+          <p>{{ item.label }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <!-- ─── Section 5 : @container ──────────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-container">
+    <h2 id="sec-container" class="poc-section__title">
+      <span class="poc-section__badge">5</span>
+      Container Queries <code>&#64;container</code>
+    </h2>
+    <p class="poc-section__desc">
+      Contrairement aux <code>&#64;media</code> qui réagissent à la fenêtre,
+      les <code>&#64;container</code> réagissent à la taille du <em>conteneur parent</em>.
+      Redimensionnez le bloc ci-dessous avec la poignée ↘ pour voir l'effet.
+    </p>
+    <div class="container-outer" aria-label="Conteneur redimensionnable">
+      <p class="container-outer__hint" aria-hidden="true">⟺ Redimensionner cette zone</p>
+      <div class="container-card">
+        <h3 class="container-card__title">Carte adaptative</h3>
+        <p class="container-card__body">
+          En mode étroit : disposition en colonne.
+          En mode large (&gt;450px) : disposition en ligne.
+        </p>
+        <span class="container-card__badge">&#64;container</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Section 6 : :host / :host-context ──────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-host">
+    <h2 id="sec-host" class="poc-section__title">
+      <span class="poc-section__badge">6</span>
+      <code>:host</code> &amp; <code>:host-context</code>
+    </h2>
+    <p class="poc-section__desc">
+      <code>:host</code> cible l'élément hôte Angular (<code>&lt;app-app-component&gt;</code>).
+      <code>:host-context(.dark-theme)</code> applique des styles quand un ancêtre porte
+      la classe <code>.dark-theme</code>. Le bouton en haut bascule le thème.
+    </p>
+    <section class="host-demo" aria-label="Démonstration host et host-context">
+      <div class="host-demo__box host-demo__box--host">
+        <code>:host</code> — Styles sur l'élément hôte
+        (<code>display: block</code>, <code>min-height: 100vh</code>…)
+      </div>
+      <div class="host-demo__box host-demo__box--context">
+        <code>:host-context(.dark-theme)</code> — La couleur change quand le thème sombre est actif
+      </div>
+    </section>
+  </section>
+
+  <!-- ─── Section 7 : Interpolation ──────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-interpolation">
+    <h2 id="sec-interpolation" class="poc-section__title">
+      <span class="poc-section__badge">7</span>
+      Interpolation <code>#&#123;&#125;</code>
+    </h2>
+    <p class="poc-section__desc">
+      La syntaxe <code>#&#123;$variable&#125;</code> insère dynamiquement une valeur SCSS
+      dans un nom de sélecteur, de propriété ou une chaîne.
+      Les 4 colonnes sont générées par <code>&#64;each</code> avec interpolation.
+    </p>
+    <ul class="interpolation-demo" aria-label="Démonstration interpolation">
+      <li class="interpolation-demo__col interpolation-demo__col--1">Col 1</li>
+      <li class="interpolation-demo__col interpolation-demo__col--2">Col 2</li>
+      <li class="interpolation-demo__col interpolation-demo__col--3">Col 3</li>
+      <li class="interpolation-demo__col interpolation-demo__col--4">Col 4</li>
+    </ul>
+  </section>
+
+  <!-- ─── Section 8 : Fonctions SCSS ─────────────────────────── -->
+  <section class="poc-section" aria-labelledby="sec-functions">
+    <h2 id="sec-functions" class="poc-section__title">
+      <span class="poc-section__badge">8</span>
+      Fonctions SCSS <code>&#64;function / sass:color / sass:math</code>
+    </h2>
+    <p class="poc-section__desc">
+      SCSS fournit des modules natifs (<code>sass:color</code>, <code>sass:math</code>)
+      et permet de créer des fonctions via <code>&#64;function / &#64;return</code>.
+      Les blocs utilisent <code>color.adjust()</code>, <code>color.mix()</code>
+      et <code>math.div()</code> calculés à la compilation.
+    </p>
+    <ul class="functions-demo" aria-label="Démonstration fonctions SCSS">
+      <li class="functions-demo__step functions-demo__step--1"><span>color.adjust +25%</span></li>
+      <li class="functions-demo__step functions-demo__step--2"><span>base</span></li>
+      <li class="functions-demo__step functions-demo__step--3"><span>color.adjust -20%</span></li>
+      <li class="functions-demo__step functions-demo__step--4"><span>color.mix()</span></li>
+      <li class="functions-demo__step functions-demo__step--5"><span>math.div(100%,3)</span></li>
+    </ul>
+    <p class="functions-demo__note">
+      ℹ️ <code>color.channel($color, "lightness", $space: hsl)</code> remplace
+      <code>color.lightness()</code> déprécié depuis Sass 1.79.
+      <code>math.div()</code> remplace l'opérateur <code>/</code> déprécié.
+    </p>
+  </section>
+
+</main>

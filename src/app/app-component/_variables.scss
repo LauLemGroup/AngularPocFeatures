@@ -1,0 +1,76 @@
+// ============================================================
+// 📦 _variables.scss — Fichier de variables SCSS partagées
+//
+// Ce fichier est importé via @use dans les composants.
+// L'usage de @use (plutôt que @import) garantit :
+//   - Une portée isolée (namespace par défaut ou alias via "as *")
+//   - Un chargement unique même si le fichier est référencé plusieurs fois
+//   - Une compatibilité avec les modules Sass modernes
+// ============================================================
+
+// ─── Couleurs ────────────────────────────────────────────────
+// Les couleurs sont définies ici et réutilisées partout via
+// les variables. Changer une couleur ici l'applique globalement.
+
+$color-primary: #3a86ff;
+$color-secondary: #ff6b6b;
+$color-accent: #06d6a0;
+$color-warning: #f4a261;
+$color-dark: #1a1a2e;
+$color-light: #f8f9fa;
+$color-text: #2d2d2d;
+$color-text-muted: #6c757d;
+$color-border: #dee2e6;
+
+// ─── Espacement ──────────────────────────────────────────────
+// Système d'espacement basé sur une unité de base (4px).
+// Cela garantit une cohérence visuelle dans toute l'application.
+
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+$space-xxl: 48px;
+
+// ─── Typographie ─────────────────────────────────────────────
+$font-size-sm: 0.875rem;   // 14px
+$font-size-md: 1rem;       // 16px
+$font-size-lg: 1.25rem;    // 20px
+$font-size-xl: 1.5rem;     // 24px
+$font-size-xxl: 2rem;      // 32px
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$line-height-base: 1.6;
+$font-family-base: 'Segoe UI', system-ui, sans-serif;
+$font-family-mono: 'Courier New', monospace;
+
+// ─── Bordures & Arrondi ───────────────────────────────────────
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 16px;
+$border-radius-full: 9999px;
+$border-width: 1px;
+
+// ─── Ombres ───────────────────────────────────────────────────
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+// ─── Breakpoints (pour @media) ───────────────────────────────
+// Utilisés dans les mixins responsive pour des points de rupture cohérents.
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// ─── Transitions ──────────────────────────────────────────────
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 400ms ease;
+
+// ─── Fonctions SCSS intégrées ─────────────────────────────────
+// SCSS fournit des fonctions natives pour manipuler les valeurs.
+// Exemples : color.adjust(), math.div(), string.to-upper-case()
+// Ces fonctions sont invocables dans les fichiers qui importent ces variables.
+

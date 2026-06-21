@@ -1,11 +1,16 @@
 import {Routes} from '@angular/router';
 import {AppComponent} from "./app-component/app-component";
 import {oauthGuard} from "./oauth-guard";
+import {FlexboxDemoComponent} from "./flexbox-demo/flexbox-demo.component";
 
 export const routes: Routes = [
     {
         path: '',
         component: AppComponent
+    },
+    {
+        path: 'flexbox-demo',
+        component: FlexboxDemoComponent
     },
     {
         path: 'formModulesPoc',

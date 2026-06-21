@@ -1,0 +1,91 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 2rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+  }
+}
+
+.item {
+  padding: 1rem;
+  background-color: #4a9eff;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  min-width: 100px;
+}
+
+// Row: items displayed horizontally
+.flex-row {
+  display: flex;
+  gap: 1rem;
+}
+
+// Column: items displayed vertically
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 200px;
+}
+
+// Centered: both horizontally and vertically
+.flex-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+// Space Between: distribute items with space between them
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+// Wrap: items wrap to next line on small screens
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .item {
+    flex: 1 1 calc(33.333% - 1rem);
+    min-width: 150px;
+  }
+}
+
+// Nested: row containing columns
+.flex-nested-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-nested-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 4px;
+}

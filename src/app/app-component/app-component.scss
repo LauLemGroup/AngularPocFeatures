@@ -1,0 +1,808 @@
+// ============================================================
+// 🎨 app-component.scss — POC SCSS complet
+//
+// ─── @use './variables' as * ────────────────────────────────
+// @use importe le fichier _variables.scss dans ce module SCSS.
+// "as *" expose toutes les variables sans namespace (ex: $color-primary
+// au lieu de variables.$color-primary).
+// Contrairement à @import (déprécié), @use garantit :
+//   - Un chargement unique du fichier (pas de duplication CSS)
+//   - Une portée de variables isolée par fichier
+// ============================================================
+@use './variables' as *;
+@use 'sass:color';  // Module natif SCSS pour manipuler les couleurs
+@use 'sass:math';   // Module natif SCSS pour les opérations mathématiques
+
+// ============================================================
+// ─── FONCTIONS SCSS @function ──────────────────────────────
+// Une @function retourne une valeur calculée via @return.
+// Différence avec @mixin : la fonction retourne une valeur,
+// le mixin génère des déclarations CSS.
+// ============================================================
+
+/// Calcule un espacement multiplié par un facteur.
+/// Utilisation : font-size: spacing(2); => 32px
+/// @param {Number} $factor - Multiplicateur de $space-md (16px)
+/// @return {Number} Valeur en px
+@function spacing($factor) {
+  @return $space-md * $factor;
+}
+
+/// Retourne une couleur de texte contrastée (noir ou blanc) selon la luminosité du fond.
+/// @param {Color} $bg - Couleur de fond
+/// @return {Color} Couleur de texte accessible
+@function contrast-color($bg) {
+  // color.lightness() est déprécié depuis Sass 1.79.
+  // Remplacé par color.channel() qui supporte les espaces colorimétriques modernes.
+  @if color.channel($bg, "lightness", $space: hsl) > 50% {
+    @return $color-dark;
+  } @else {
+    @return $color-light;
+  }
+}
+
+// ============================================================
+// ─── MIXINS ─────────────────────────────────────────────────
+// Un @mixin est un bloc de styles réutilisable, paramétrable.
+// Il est inclus via @include. Peut contenir des règles, des
+// @media, du nesting, etc.
+// ============================================================
+
+/// Mixin : centrage flexbox rapide.
+/// @param {String} $direction [row] - Direction du flex
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  justify-content: center;
+}
+
+/// Mixin : style de carte avec paramètres par défaut.
+/// @param {Color} $bg [$color-light] - Couleur de fond
+/// @param {String} $shadow [$shadow-md] - Ombre portée
+@mixin card($bg: $color-light, $shadow: $shadow-md) {
+  background: $bg;
+  border-radius: $border-radius-md;
+  padding: $space-lg;
+  box-shadow: $shadow;
+  border: $border-width solid $color-border;
+}
+
+/// Mixin : variante de bouton avec couleur principale.
+/// Génère les états :hover, :focus-visible, :active.
+/// @param {Color} $color - Couleur principale du bouton
+/// @param {Color} $text [$color-light] - Couleur du texte
+@mixin btn-variant($color, $text: $color-light) {
+  background-color: $color;
+  color: $text;
+  border-color: $color;
+
+  // Nesting des pseudo-classes dans le mixin
+  &:hover,
+  &:focus-visible {
+    background-color: color.adjust($color, $lightness: -10%);
+    border-color: color.adjust($color, $lightness: -10%);
+    outline: 2px solid color.adjust($color, $lightness: -20%);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    background-color: color.adjust($color, $lightness: -20%);
+  }
+}
+
+/// Mixin : responsive — applique des styles à partir d'un breakpoint.
+/// Les @media peuvent être imbriqués dans les sélecteurs SCSS.
+/// @param {String} $bp - Nom du breakpoint (sm, md, lg, xl)
+@mixin respond-to($bp) {
+  @if $bp == 'sm' {
+    @media (min-width: #{$breakpoint-sm}) { @content; }
+  } @else if $bp == 'md' {
+    @media (min-width: #{$breakpoint-md}) { @content; }
+  } @else if $bp == 'lg' {
+    @media (min-width: #{$breakpoint-lg}) { @content; }
+  } @else if $bp == 'xl' {
+    @media (min-width: #{$breakpoint-xl}) { @content; }
+  }
+}
+
+// ============================================================
+// ─── :host ──────────────────────────────────────────────────
+// :host cible l'ÉLÉMENT HÔTE du composant Angular lui-même,
+// c'est-à-dire la balise <app-app-component> dans le DOM.
+// Très utile pour définir le display, la largeur, ou les
+// CSS custom properties à l'échelle du composant.
+// ============================================================
+:host {
+  display: block;
+  font-family: $font-family-base;
+  color: $color-text;
+  background-color: $color-light;
+  min-height: 100vh;
+  transition: background-color $transition-base, color $transition-base;
+
+  // :host avec sélecteur d'attribut — s'active quand l'hôte porte [data-theme="dark"]
+  &[data-theme='dark'] {
+    background-color: $color-dark;
+    color: $color-light;
+  }
+}
+
+// ============================================================
+// ─── :host-context ──────────────────────────────────────────
+// :host-context(.classe) applique des styles au composant quand
+// UN ANCÊTRE (parent, grand-parent…) porte cette classe.
+// Utile pour les thèmes globaux définis sur <body> ou <html>.
+// Ici, Angular ajoute .dark-theme sur l'hôte lui-même via host binding.
+// ============================================================
+:host-context(.dark-theme) {
+  background-color: $color-dark;
+  color: $color-light;
+
+  .poc-section {
+    background-color: color.mix($color-dark, $color-primary, 85%);
+    border-color: color.adjust($color-primary, $lightness: -20%);
+    color: $color-light;
+  }
+
+  .poc-section__desc {
+    color: color.adjust($color-light, $lightness: -15%);
+  }
+
+  .host-demo__box--context {
+    background-color: color.adjust($color-primary, $lightness: -30%);
+    color: $color-light;
+    border-color: $color-primary;
+  }
+
+  .card--elevated {
+    background-color: color.mix($color-dark, $color-primary, 75%);
+    color: $color-light;
+  }
+}
+
+// ============================================================
+// ─── RESET & LAYOUT ─────────────────────────────────────────
+// ============================================================
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.poc-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: $space-lg;
+
+  // @media imbriqué dans le sélecteur via le mixin respond-to
+  // SCSS permet d'écrire les media queries directement dans le sélecteur.
+  @include respond-to('md') {
+    padding: $space-xl;
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────
+// Nesting BEM : __title, __subtitle, __actions sont imbriqués dans .poc-header
+.poc-header {
+  text-align: center;
+  padding: $space-xxl $space-lg;
+  background: linear-gradient(135deg, $color-primary, color.adjust($color-primary, $hue: 40deg));
+  border-radius: $border-radius-lg;
+  margin-bottom: $space-xxl;
+  color: $color-light;
+
+  &__title {
+    font-size: $font-size-xxl;
+    font-weight: $font-weight-bold;
+    margin: 0 0 $space-sm;
+    line-height: 1.2;
+
+    // @media imbriqué — utilise la @function spacing()
+    @include respond-to('md') {
+      font-size: spacing(2.5);
+    }
+  }
+
+  &__subtitle {
+    font-size: $font-size-lg;
+    margin: 0 0 $space-lg;
+    opacity: 0.9;
+  }
+
+  &__actions {
+    @include flex-center(row);
+    flex-wrap: wrap;
+    gap: $space-sm;
+  }
+}
+
+// ─── Boutons — mixin btn-variant ──────────────────────────────
+.btn {
+  padding: $space-sm $space-lg;
+  border-radius: $border-radius-full;
+  border: 2px solid transparent;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-decoration: none;
+
+  &--primary {
+    @include btn-variant($color-accent, $color-dark);
+  }
+
+  &--secondary {
+    @include btn-variant(transparent, $color-light);
+    border-color: $color-light;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba(255, 255, 255, 0.15);
+      outline: 2px solid $color-light;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// ─── Section générique ────────────────────────────────────────
+.poc-section {
+  @include card($color-light, $shadow-md);
+  margin-bottom: $space-xl;
+  padding: $space-xl;
+
+  &__title {
+    @include flex-center(row);
+    justify-content: flex-start;
+    gap: $space-sm;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0 0 $space-md;
+
+    code {
+      font-family: $font-family-mono;
+      font-size: $font-size-md;
+      background: color.adjust($color-primary, $lightness: 40%);
+      padding: 2px $space-xs;
+      border-radius: $border-radius-sm;
+    }
+  }
+
+  &__badge {
+    @include flex-center;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    background: $color-primary;
+    color: $color-light;
+    border-radius: $border-radius-full;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+
+  &__desc {
+    color: $color-text-muted;
+    font-size: $font-size-md;
+    line-height: $line-height-base;
+    margin: 0 0 $space-lg;
+
+    code {
+      font-family: $font-family-mono;
+      background: color.adjust($color-border, $lightness: 5%);
+      padding: 1px $space-xs;
+      border-radius: $border-radius-sm;
+      font-size: 0.9em;
+      color: $color-secondary;
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 1 : Variables — swatches de couleurs ───────────
+// Les couleurs proviennent directement des variables $color-*
+// définies dans _variables.scss.
+// ============================================================
+.variables-demo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-md;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &__swatch {
+    @include flex-center(column);
+    padding: $space-lg $space-md;
+    border-radius: $border-radius-md;
+    min-height: 80px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+
+    // Nesting des modificateurs BEM
+    &--primary {
+      background: $color-primary;
+      color: contrast-color($color-primary); // appel de notre @function
+    }
+
+    &--secondary {
+      background: $color-secondary;
+      color: contrast-color($color-secondary);
+    }
+
+    &--accent {
+      background: $color-accent;
+      color: contrast-color($color-accent);
+    }
+
+    &--warning {
+      background: $color-warning;
+      color: contrast-color($color-warning);
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 2 : Mixins ─────────────────────────────────────
+// Démonstration des mixins card et flex-center.
+// ============================================================
+.mixins-demo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+
+  @include respond-to('md') {
+    flex-direction: row;
+  }
+}
+
+.card {
+  flex: 1;
+
+  // Le mixin card est @include-d avec des arguments personnalisés
+  &--elevated {
+    @include card(color.adjust($color-primary, $lightness: 48%), $shadow-lg);
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0 0 $space-sm;
+
+    code {
+      font-family: $font-family-mono;
+      font-size: $font-size-md;
+    }
+  }
+
+  &__body {
+    color: $color-text;
+    line-height: $line-height-base;
+    margin: 0;
+  }
+}
+
+.flex-center-demo {
+  @include flex-center(column);
+  flex: 1;
+  min-height: 120px;
+  background: color.adjust($color-accent, $lightness: 35%);
+  border-radius: $border-radius-md;
+  border: 2px dashed $color-accent;
+  font-weight: $font-weight-bold;
+  color: color.adjust($color-accent, $lightness: -20%);
+
+  code {
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+  }
+}
+
+// ============================================================
+// ─── SECTION 3 : Nesting ────────────────────────────────────
+// Démonstration du nesting SCSS : les sélecteurs enfants sont
+// imbriqués dans leur parent, générant des règles CSS préfixées.
+//
+// SCSS → CSS compilé :
+//   .nesting-nav { }
+//     .nesting-nav__list { }
+//       .nesting-nav__item { }
+//         .nesting-nav__link { }
+//           .nesting-nav__link:hover { }
+// ============================================================
+.nesting-nav {
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+
+  // Nesting niveau 1 : liste
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    @include respond-to('sm') {
+      flex-direction: row;
+    }
+  }
+
+  // Nesting niveau 1 : item
+  &__item {
+    flex: 1;
+    border-bottom: $border-width solid $color-border;
+
+    @include respond-to('sm') {
+      border-bottom: none;
+      border-right: $border-width solid $color-border;
+
+      // Nesting de pseudo-classe :last-child
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    // Nesting niveau 2 : modificateur --active
+    &--active {
+      background: $color-primary;
+
+      // Nesting niveau 3 : lien dans l'item actif
+      .nesting-nav__link {
+        color: $color-light;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+
+  // Nesting niveau 1 : lien avec pseudo-classes imbriquées
+  &__link {
+    display: block;
+    padding: $space-md $space-lg;
+    color: $color-primary;
+    text-decoration: none;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: color.adjust($color-primary, $lightness: 45%);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: -2px;
+      background-color: color.adjust($color-primary, $lightness: 45%);
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 4 : @media ─────────────────────────────────────
+// Les @media en SCSS sont imbriquées directement dans les sélecteurs
+// via le mixin respond-to(). Le compilateur les extrait à la compilation.
+//
+// Avantages :
+//  - Styles mobile/desktop groupés près du sélecteur concerné
+//  - Breakpoints centralisés dans _variables.scss
+//  - Réutilisation via le mixin respond-to($bp)
+// ============================================================
+.media-demo {
+  display: grid;
+  gap: $space-md;
+  grid-template-columns: 1fr; // Mobile : 1 colonne
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, 1fr); // 2 colonnes
+  }
+
+  @include respond-to('md') {
+    grid-template-columns: repeat(3, 1fr); // 3 colonnes
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(6, 1fr); // 6 colonnes
+  }
+
+  &__item {
+    @include flex-center(column);
+    gap: $space-xs;
+    padding: $space-lg $space-sm;
+    background: color.adjust($color-primary, $lightness: 40%);
+    border-radius: $border-radius-md;
+    border: $border-width solid color.adjust($color-primary, $lightness: 25%);
+    min-height: 80px;
+
+    p {
+      margin: 0;
+      font-size: $font-size-sm;
+      text-align: center;
+      color: $color-text-muted;
+    }
+  }
+
+  &__label {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+  }
+}
+
+// ============================================================
+// ─── SECTION 5 : @container ─────────────────────────────────
+// Les container queries permettent aux styles d'un enfant
+// de réagir à la TAILLE DE SON CONTENEUR PARENT, pas de la fenêtre.
+//
+// Étape 1 : Déclarer le conteneur avec container-type
+// Étape 2 : Utiliser @container dans les styles de l'enfant
+// ============================================================
+.container-outer {
+  // Étape 1 : Déclaration du conteneur
+  // container-type: inline-size → réagit à la largeur
+  // container-name → pour cibler ce conteneur spécifiquement
+  container-type: inline-size;
+  container-name: card-container;
+
+  border: 2px dashed $color-primary;
+  border-radius: $border-radius-lg;
+  padding: $space-md;
+  resize: horizontal; // Permet le redimensionnement avec la souris
+  overflow: auto;
+  min-width: 250px;
+  max-width: 100%;
+  background: color.adjust($color-primary, $lightness: 46%);
+
+  &__hint {
+    font-size: $font-size-sm;
+    color: $color-primary;
+    text-align: center;
+    margin: 0 0 $space-md;
+    font-weight: $font-weight-bold;
+    font-style: italic;
+  }
+}
+
+.container-card {
+  // Styles par défaut (conteneur étroit → colonne)
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-lg;
+  background: $color-light;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+
+  // Étape 2 : @container — styles quand le conteneur > 450px
+  // Réagit à .container-outer, pas à la fenêtre du navigateur.
+  @container card-container (min-width: 450px) {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0;
+  }
+
+  &__body {
+    flex: 1;
+    color: $color-text;
+    margin: 0;
+    line-height: $line-height-base;
+  }
+
+  &__badge {
+    @include flex-center;
+    padding: $space-xs $space-md;
+    background: $color-primary;
+    color: $color-light;
+    border-radius: $border-radius-full;
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    white-space: nowrap;
+    align-self: flex-start;
+
+    @container card-container (min-width: 450px) {
+      align-self: center;
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 6 : :host / :host-context ──────────────────────
+// Définis en haut du fichier. Cette section affiche
+// visuellement l'effet des deux sélecteurs.
+// ============================================================
+.host-demo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  @include respond-to('md') {
+    flex-direction: row;
+  }
+
+  &__box {
+    flex: 1;
+    padding: $space-lg;
+    border-radius: $border-radius-md;
+    border: 2px solid $color-border;
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+    line-height: $line-height-base;
+    transition: all $transition-base;
+
+    &--host {
+      background: color.adjust($color-warning, $lightness: 28%);
+      border-color: $color-warning;
+      color: color.adjust($color-warning, $lightness: -30%);
+    }
+
+    // La couleur de --context change via :host-context en haut du fichier
+    &--context {
+      background: color.adjust($color-primary, $lightness: 42%);
+      border-color: $color-primary;
+      color: color.adjust($color-primary, $lightness: -20%);
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 7 : Interpolation #{} ──────────────────────────
+// L'interpolation #{ } insère une expression SCSS dans une
+// position où le compilateur n'accepte pas une variable seule.
+//
+// Cas d'usage :
+//   - Noms de sélecteurs  : .col--#{$n}
+//   - Noms de propriétés  : --col-color-#{$n}: #{$val}
+//   - Valeurs dans @media : (min-width: #{$bp})
+//
+// Ici : une boucle @each génère les sélecteurs .col--N
+// et leur couleur via interpolation sur le nom de classe.
+// ============================================================
+
+$interpolation-colors: (
+  1: $color-primary,
+  2: $color-secondary,
+  3: $color-accent,
+  4: $color-warning,
+);
+
+.interpolation-demo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-md;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // @each + interpolation ──────────────────────────────────
+  // Pour chaque entrée de la map, génère un sélecteur
+  // .interpolation-demo__col--N avec sa couleur propre.
+  // #{$index} injecte la valeur dans le nom du sélecteur.
+  @each $index, $col-color in $interpolation-colors {
+    &__col--#{$index} {
+      // Interpolation du nom de la propriété CSS custom
+      --col-color-#{$index}: #{$col-color};
+
+      @include flex-center(column);
+      min-height: 80px;
+      border-radius: $border-radius-md;
+      background-color: $col-color;
+      color: contrast-color($col-color);
+      font-weight: $font-weight-bold;
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+// ============================================================
+// ─── SECTION 8 : Fonctions SCSS ─────────────────────────────
+// SCSS natif fournit plusieurs modules de fonctions :
+//
+// @use 'sass:color'
+//   color.adjust($color, $lightness: N%)  → éclaircit/assombrit
+//   color.mix($c1, $c2, $weight%)         → mélange deux couleurs
+//   color.lightness($color)               → retourne la luminosité
+//
+// @use 'sass:math'
+//   math.div($a, $b)                      → division (remplace a/b déprécié)
+//
+// @function (personnalisée) → voir spacing() et contrast-color() en haut
+// ============================================================
+.functions-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  margin-bottom: $space-md;
+  list-style: none;
+  margin: 0 0 $space-md;
+  padding: 0;
+
+  &__step {
+    @include flex-center(column);
+    flex: 1;
+    min-width: 80px;
+    min-height: 90px;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    padding: $space-sm;
+    text-align: center;
+
+    span {
+      font-family: $font-family-mono;
+      font-size: 0.75rem;
+    }
+
+    // color.adjust — éclaircissement (+25% lightness)
+    &--1 {
+      $c: color.adjust($color-primary, $lightness: 25%);
+      background: $c;
+      color: contrast-color($c);
+    }
+
+    // Couleur de base, sans modification
+    &--2 {
+      background: $color-primary;
+      color: contrast-color($color-primary);
+    }
+
+    // color.adjust — assombrissement (-20% lightness)
+    &--3 {
+      $c: color.adjust($color-primary, $lightness: -20%);
+      background: $c;
+      color: contrast-color($c);
+    }
+
+    // color.mix — mélange 50% primary + 50% secondary
+    &--4 {
+      $c: color.mix($color-primary, $color-secondary, 50%);
+      background: $c;
+      color: contrast-color($c);
+    }
+
+    // math.div — largeur calculée par division (100% / 3)
+    // math.div remplace l'opérateur / qui est déprécié en SCSS moderne
+    &--5 {
+      $c: color.adjust($color-accent, $lightness: -10%);
+      background: $c;
+      color: contrast-color($c);
+      flex: none;
+      width: math.div(100%, 3);
+    }
+  }
+
+  &__note {
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    background: color.adjust($color-border, $lightness: 5%);
+    padding: $space-md;
+    border-radius: $border-radius-sm;
+    border-left: 4px solid $color-accent;
+    line-height: $line-height-base;
+    margin: $space-md 0 0;
+
+    code {
+      font-family: $font-family-mono;
+      color: $color-secondary;
+      font-size: 0.9em;
+    }
+  }
+}
+
